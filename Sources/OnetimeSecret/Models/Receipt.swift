@@ -103,11 +103,11 @@ public struct Receipt: Sendable, Hashable, Identifiable {
     public var lastAccessedAt: Date?
 
     /// The generated value, for a secret created with
-    /// ``OnetimeSecretClient/Secrets/generate(_:)``.
+    /// ``OnetimeSecretClient/Secrets/generate(options:)``.
     ///
     /// The API discloses it to the creator exactly once, on the first fetch of
     /// the receipt within a short window after creation. After that it is
-    /// `nil` for good. ``OnetimeSecretClient/Secrets/generate(_:)`` claims
+    /// `nil` for good. ``OnetimeSecretClient/Secrets/generate(options:)`` claims
     /// that single disclosure for you unless told not to.
     public var generatedValue: String?
 

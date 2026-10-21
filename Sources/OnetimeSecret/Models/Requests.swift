@@ -17,7 +17,7 @@ public protocol SecretCreationOptions: Sendable {
     var shareDomain: String? { get set }
 }
 
-/// Options for ``OnetimeSecretClient/Secrets/conceal(_:_:)``.
+/// Options for ``OnetimeSecretClient/Secrets/conceal(_:options:)``.
 public struct ConcealOptions: SecretCreationOptions, Hashable {
     public var timeToLive: TimeInterval?
     public var passphrase: String?
@@ -91,7 +91,7 @@ public struct CharacterSets: Sendable, Hashable, Encodable {
     }
 }
 
-/// Options for ``OnetimeSecretClient/Secrets/generate(_:)``.
+/// Options for ``OnetimeSecretClient/Secrets/generate(options:)``.
 public struct GenerateOptions: SecretCreationOptions, Hashable {
     /// Shortest value the service will generate.
     public static let minimumLength = 4

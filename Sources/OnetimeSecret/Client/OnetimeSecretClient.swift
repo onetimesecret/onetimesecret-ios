@@ -43,6 +43,7 @@ public struct OnetimeSecretClient: Sendable {
     ///   - region: The hosted region to talk to. Defaults to ``Region/unitedStates``.
     ///   - credentials: Optional account credentials. Without them the client
     ///     acts as a guest.
+    ///   - transport: The HTTP transport. Defaults to ``URLSessionTransport/shared``.
     public init(
         region: Region = .unitedStates,
         credentials: Credentials? = nil,
@@ -56,6 +57,7 @@ public struct OnetimeSecretClient: Sendable {
     /// - Parameters:
     ///   - baseURL: Origin of the installation, for example `https://secrets.example.com`.
     ///   - credentials: Optional account credentials.
+    ///   - transport: The HTTP transport. Defaults to ``URLSessionTransport/shared``.
     public init(
         baseURL: URL,
         credentials: Credentials? = nil,

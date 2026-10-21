@@ -128,7 +128,7 @@ locally and remotely (`git push --delete origin v1.2.0`), and tag again.
 
 The SDK version is sent in the `User-Agent` header
 (`onetimesecret-ios/1.2.0 (Swift/6.2; iOS)`) and in `X-Onetime-Client`
-(`swift:6.2/1.2.0`), the same convention as onetime-ruby, which is how the
+(`swift:6.2/1.2.0`), the same convention as onetimesecret-ruby, which is how the
 service team can tell which clients and versions are in use before
 deprecating anything.
 

@@ -3,7 +3,7 @@ extension OnetimeSecretClient {
     public static let version = "0.1.0"
 
     /// Value sent in the `X-Onetime-Client` header: `swift:<language>/<sdk>`,
-    /// the same shape as `ruby:<ruby>/<sdk>` from onetime-ruby.
+    /// the same shape as `ruby:<ruby>/<sdk>` from onetimesecret-ruby.
     static let clientHeader = "swift:\(swiftVersion)/\(version)"
 
     /// Swift language version the SDK was compiled with.

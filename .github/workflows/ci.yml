@@ -29,18 +29,19 @@ jobs:
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      - name: Tool versions
+      - name: Install tools
+        # The macos-26 image does not ship SwiftLint or SwiftFormat on PATH.
         run: |
+          brew install swiftlint swiftformat actionlint
           swiftlint --version
           swiftformat --version
+          actionlint -version
       - name: SwiftFormat (check only)
         run: swiftformat --lint --strict .
       - name: SwiftLint
         run: swiftlint lint --strict --reporter github-actions-logging
       - name: actionlint
-        run: |
-          brew install actionlint
-          actionlint
+        run: actionlint
 
   test-macos:
     name: Test (macOS, Xcode ${{ matrix.xcode }})

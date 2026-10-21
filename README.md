@@ -175,7 +175,7 @@ Sources/OnetimeSecret/
 Tests/OnetimeSecretTests/
   Fixtures/    JSON captured from the live API (identifiers scrubbed)
   Support/     MockTransport
-  LiveTests    opt-in end-to-end suite (ONETIMESECRET_LIVE_TESTS=1)
+  LiveTests    opt-in end-to-end suite (ONETIME_LIVE=1)
 ```
 
 ## Contributing

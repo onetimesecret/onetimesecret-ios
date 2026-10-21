@@ -3,9 +3,9 @@ import Testing
 @testable import OnetimeSecret
 
 /// End-to-end tests against the hosted service. Off by default; enable with
-/// `ONETIMESECRET_LIVE_TESTS=1`. They run as a guest against the US region
-/// unless `ONETIMESECRET_BASE_URL`, `ONETIMESECRET_USERNAME` and
-/// `ONETIMESECRET_API_TOKEN` are set. Each test creates throwaway secrets
+/// `ONETIME_LIVE=1`. They run as a guest against the US region
+/// unless `ONETIME_BASE_URL`, `ONETIME_CUSTOMER_EXTID` and
+/// `ONETIME_API_TOKEN` are set. Each test creates throwaway secrets
 /// with a five-minute lifetime and consumes or burns them.
 @Suite("Live", .serialized, .enabled(if: LiveEnvironment.isEnabled))
 struct LiveTests {
@@ -94,16 +94,16 @@ struct LiveTests {
 
 enum LiveEnvironment {
     static var isEnabled: Bool {
-        ProcessInfo.processInfo.environment["ONETIMESECRET_LIVE_TESTS"] == "1"
+        ProcessInfo.processInfo.environment["ONETIME_LIVE"] == "1"
     }
 
     static func makeClient() -> OnetimeSecretClient {
         let env = ProcessInfo.processInfo.environment
         var credentials: Credentials?
-        if let username = env["ONETIMESECRET_USERNAME"], let token = env["ONETIMESECRET_API_TOKEN"] {
+        if let username = env["ONETIME_CUSTOMER_EXTID"], let token = env["ONETIME_API_TOKEN"] {
             credentials = Credentials(username: username, apiToken: token)
         }
-        if let raw = env["ONETIMESECRET_BASE_URL"], let url = URL(string: raw) {
+        if let raw = env["ONETIME_BASE_URL"], let url = URL(string: raw) {
             return OnetimeSecretClient(baseURL: url, credentials: credentials)
         }
         return OnetimeSecretClient(region: .unitedStates, credentials: credentials)

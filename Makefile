@@ -24,8 +24,8 @@ build: ## Build the package (debug)
 test: ## Run unit tests
 	swift test --parallel
 
-test-live: ## Run end-to-end tests against the hosted service (guest unless ONETIMESECRET_USERNAME/API_TOKEN are set)
-	ONETIMESECRET_LIVE_TESTS=1 swift test --filter Live
+test-live: ## Run end-to-end tests against the hosted service (guest unless ONETIME_CUSTOMER_EXTID and ONETIME_API_TOKEN are set)
+	ONETIME_LIVE=1 swift test --filter Live
 
 test-ios: ## Run tests on an iOS simulator (IOS_DESTINATION overrides the device)
 	set -o pipefail; xcodebuild test -scheme $(SCHEME) -destination "$(IOS_DESTINATION)" \

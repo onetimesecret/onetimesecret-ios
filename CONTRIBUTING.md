@@ -70,7 +70,7 @@ their own so formatting churn stays separate from code changes.
   from the live service with identifiers replaced. When the API changes
   shape, capture a new fixture rather than hand-editing the old one, and say
   so in the PR.
-- The `Live` suite is skipped unless `ONETIMESECRET_LIVE_TESTS=1`. Add a
+- The `Live` suite is skipped unless `ONETIME_LIVE=1`. Add a
   live test when you add an operation; it is what catches API drift.
 - CI builds with `-warnings-as-errors`. Fix warnings, do not suppress them.
 

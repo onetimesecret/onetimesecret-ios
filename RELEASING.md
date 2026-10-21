@@ -61,8 +61,12 @@ The scheduled `Live API check` and the opt-in `live` CI job run as a guest
 with no secrets at all. To exercise the authenticated endpoints too, add
 repository secrets for a dedicated test account on the US region:
 
-- `ONETIMESECRET_USERNAME` (the account email or external ID)
-- `ONETIMESECRET_API_TOKEN`
+- `ONETIME_CUSTOMER_EXTID` (the account's external ID, `ur...`, shown on the
+  API settings page; the account email also works)
+- `ONETIME_API_TOKEN`
+
+These are the names every official SDK uses, so one CI account serves all
+of them.
 
 Use an account created for CI, not a personal one, so the token can be
 rotated without ceremony.

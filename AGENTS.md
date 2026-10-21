@@ -54,10 +54,10 @@ on macOS and Linux. `-warnings-as-errors` is on; do not add suppressions.
   a 422 about the passphrase into `.passphraseRejected`.
 - Guest vs authenticated endpoints are chosen by `client.path(_:guest:)`
   from whether credentials exist. Never ask the caller to pick.
-- The service also serves the authenticated endpoints under
-  `/api/v2/private/*` aliases. They are deliberately not exposed: the SDK
-  uses `/api/v2/...` with credentials and `/api/v2/guest/...` without, and
-  nothing should introduce a third path family.
+- The service still answers `/api/v2/private/*`, a deprecated alias of the
+  receipt endpoints. It is deliberately not exposed: the SDK uses
+  `/api/v2/receipt/...` with credentials and `/api/v2/guest/receipt/...`
+  without, and nothing should introduce a third path family.
 - `generate()` fetches the receipt once after creation to claim the single
   disclosure of the generated value. Removing that changes a documented
   behaviour (`GenerateOptions.claimValue`).

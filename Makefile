@@ -2,8 +2,9 @@
 SHELL := /bin/bash
 .DEFAULT_GOAL := help
 
-SCHEME := OnetimeSecret
-PACKAGE_SCHEME := onetimesecret-ios-Package
+# xcodebuild exposes one auto-generated scheme per package, named after it.
+SCHEME := onetimesecret-ios
+ARCHIVE_NAME := OnetimeSecret
 IOS_DESTINATION ?= platform=iOS Simulator,name=iPhone 17
 
 .PHONY: help setup build test test-live test-ios lint format docs docs-preview clean check release-prepare release-tag
@@ -27,7 +28,7 @@ test-live: ## Run end-to-end tests against the hosted service (guest unless ONET
 	ONETIMESECRET_LIVE_TESTS=1 swift test --filter Live
 
 test-ios: ## Run tests on an iOS simulator (IOS_DESTINATION overrides the device)
-	set -o pipefail; xcodebuild test -scheme $(PACKAGE_SCHEME) -destination "$(IOS_DESTINATION)" \
+	set -o pipefail; xcodebuild test -scheme $(SCHEME) -destination "$(IOS_DESTINATION)" \
 		-skipPackagePluginValidation CODE_SIGNING_ALLOWED=NO | xcbeautify
 
 lint: ## SwiftFormat (check) + SwiftLint (strict), exactly as CI runs them
@@ -41,10 +42,10 @@ format: ## Rewrite sources with SwiftFormat and SwiftLint autocorrect
 docs: ## Build the DocC archive into .docc-build
 	set -o pipefail; xcodebuild docbuild -scheme $(SCHEME) -destination "generic/platform=macOS" \
 		-derivedDataPath .docc-build OTHER_DOCC_FLAGS="--warnings-as-errors" | xcbeautify
-	@echo "Archive: $$(find .docc-build -name '$(SCHEME).doccarchive' -type d | head -n 1)"
+	@echo "Archive: $$(find .docc-build -name '$(ARCHIVE_NAME).doccarchive' -type d | head -n 1)"
 
 docs-preview: docs ## Serve the documentation locally on http://localhost:8000
-	@ARCHIVE="$$(find .docc-build -name '$(SCHEME).doccarchive' -type d | head -n 1)"; \
+	@ARCHIVE="$$(find .docc-build -name '$(ARCHIVE_NAME).doccarchive' -type d | head -n 1)"; \
 	"$$(xcrun --find docc)" process-archive transform-for-static-hosting "$$ARCHIVE" --output-path .docc-build/site; \
 	echo "Open http://localhost:8000/documentation/onetimesecret/"; \
 	python3 -m http.server --directory .docc-build/site 8000

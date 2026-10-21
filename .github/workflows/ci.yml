@@ -128,14 +128,10 @@ jobs:
           echo "value=platform=iOS Simulator,id=$UDID" >> "$GITHUB_OUTPUT"
           xcrun simctl list devices | grep "$UDID"
       - name: xcodebuild ${{ matrix.action }}
-        env:
-          # The auto-generated product scheme has no test action; the
-          # package scheme does.
-          SCHEME: ${{ matrix.action == 'test' && 'onetimesecret-ios-Package' || 'OnetimeSecret' }}
         run: |
           set -o pipefail
           xcodebuild ${{ matrix.action }} \
-            -scheme "$SCHEME" \
+            -scheme onetimesecret-ios \
             -destination "${{ steps.destination.outputs.value }}" \
             -skipPackagePluginValidation \
             -skipMacroValidation \
@@ -171,7 +167,7 @@ jobs:
         run: |
           set -o pipefail
           xcodebuild docbuild \
-            -scheme OnetimeSecret \
+            -scheme onetimesecret-ios \
             -destination "generic/platform=macOS" \
             -derivedDataPath .docc-build \
             OTHER_DOCC_FLAGS="--warnings-as-errors" \

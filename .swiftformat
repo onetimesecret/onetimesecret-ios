@@ -1,0 +1,26 @@
+# SwiftFormat configuration. https://github.com/nicklockwood/SwiftFormat
+--swiftversion 6.0
+--exclude .build,.swiftpm,DerivedData
+
+# Formatting
+--indent 4
+--maxwidth 120
+--wraparguments before-first
+--wrapparameters before-first
+--wrapcollections before-first
+--closingparen balanced
+--commas always
+--semicolons never
+--trimwhitespace always
+--stripunusedargs closure-only
+--self remove
+--importgrouping testable-last
+--ifdef indent
+--header strip
+--extensionacl on-declarations
+--patternlet hoist
+--redundanttype inferred
+
+# Rules
+--enable isEmpty,blankLinesBetweenImports,blockComments,docComments,wrapEnumCases
+--disable andOperator,redundantReturn,wrapMultilineStatementBraces,opaqueGenericParameters,wrapPropertyBodies,wrapSwitchCases,wrapIfStatementBodies

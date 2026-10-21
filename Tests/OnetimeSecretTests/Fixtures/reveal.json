@@ -1,0 +1,27 @@
+{
+  "record": {
+    "identifier": "secret00000000000000000000000000000000000000000000000000000000",
+    "key": "secret00000000000000000000000000000000000000000000000000000000",
+    "shortid": "secret00",
+    "state": "revealed",
+    "lifespan": 300,
+    "secret_ttl": 300,
+    "has_passphrase": false,
+    "verification": false,
+    "display_type": "text",
+    "created": 1792538326.18118,
+    "updated": 1792538326.18118,
+    "is_previewed": false,
+    "is_revealed": true,
+    "is_viewed": false,
+    "is_received": true,
+    "secret_value": "sdk fixture capture, safe to discard"
+  },
+  "details": {
+    "continue": true,
+    "is_owner": false,
+    "show_secret": true,
+    "display_lines": 4,
+    "one_liner": true
+  }
+}

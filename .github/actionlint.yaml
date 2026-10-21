@@ -1,0 +1,5 @@
+# actionlint configuration. Newer runner labels than the pinned actionlint
+# release knows about are listed here so the hook does not reject them.
+self-hosted-runner:
+  labels:
+    - macos-26

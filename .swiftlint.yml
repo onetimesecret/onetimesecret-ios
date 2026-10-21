@@ -1,0 +1,110 @@
+# SwiftLint configuration. https://github.com/realm/SwiftLint
+included:
+  - Package.swift
+  - Sources
+  - Tests
+
+excluded:
+  - .build
+  - .swiftpm
+  - DerivedData
+
+analyzer_rules:
+  - unused_declaration
+  - unused_import
+
+opt_in_rules:
+  - array_init
+  - closure_spacing
+  - collection_alignment
+  - contains_over_filter_count
+  - contains_over_filter_is_empty
+  - contains_over_first_not_nil
+  - contains_over_range_nil_comparison
+  - discouraged_object_literal
+  - empty_collection_literal
+  - empty_count
+  - empty_string
+  - explicit_init
+  - fallthrough
+  - fatal_error_message
+  - force_unwrapping
+  - first_where
+  - flatmap_over_map_reduce
+  - identical_operands
+  - implicitly_unwrapped_optional
+  - joined_default_parameter
+  - last_where
+  - legacy_multiple
+  - literal_expression_end_indentation
+  - lower_acl_than_parent
+  - modifier_order
+  - multiline_arguments
+  - multiline_parameters
+  - operator_usage_whitespace
+  - overridden_super_call
+  - pattern_matching_keywords
+  - prefer_self_type_over_type_of_self
+  - prefer_zero_over_explicit_init
+  - redundant_nil_coalescing
+  - redundant_type_annotation
+  - sorted_first_last
+  - static_operator
+  - toggle_bool
+  - unavailable_function
+  - unneeded_parentheses_in_closure_argument
+  - unowned_variable_capture
+  - vertical_parameter_alignment_on_call
+  - vertical_whitespace_closing_braces
+  - yoda_condition
+
+disabled_rules:
+  - todo
+  - trailing_comma            # SwiftFormat owns this (always)
+  - opening_brace             # SwiftFormat owns formatting
+  - identifier_name           # one-letter container names (`c`) are idiomatic in init(from:)
+  - optional_data_string_conversion  # String(decoding:as:) is the API Swift recommends for UTF-8
+
+line_length:
+  warning: 120
+  error: 160
+  ignores_urls: true
+  ignores_comments: true
+
+type_body_length:
+  warning: 300
+  error: 400
+
+file_length:
+  warning: 500
+  error: 700
+
+function_body_length:
+  warning: 60
+  error: 100
+
+cyclomatic_complexity:
+  warning: 15
+  error: 25
+
+nesting:
+  type_level: 2
+
+force_unwrapping:
+  severity: error
+
+custom_rules:
+  no_print:
+    name: "No print"
+    regex: '(^|[^\w.])(Swift\.)?(print|debugPrint|dump)\('
+    message: "An SDK must not write to stdout. Secrets could end up in logs."
+    severity: error
+    included: "Sources/.*\\.swift"
+    excluded_match_kinds: [comment, doccomment, doccomment.field, string]
+  no_nslog:
+    name: "No NSLog / os_log"
+    regex: '\b(NSLog|os_log|Logger)\('
+    message: "An SDK must not log. Secrets could end up in logs."
+    severity: error
+    included: "Sources/.*\\.swift"
+    excluded_match_kinds: [comment, doccomment, doccomment.field, string]

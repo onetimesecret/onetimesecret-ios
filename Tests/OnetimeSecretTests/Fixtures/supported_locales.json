@@ -1,0 +1,10 @@
+{
+  "success": true,
+  "locales": [
+    "de",
+    "en",
+    "fr_FR"
+  ],
+  "default_locale": "en",
+  "locale": "en"
+}

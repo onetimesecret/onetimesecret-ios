@@ -1,0 +1,37 @@
+# Swift Package Manager
+.build/
+.swiftpm/
+Package.resolved
+*.xcodeproj
+*.xcworkspace
+!*.xcworkspace/contents.xcworkspacedata
+
+# Xcode
+DerivedData/
+xcuserdata/
+*.xcuserstate
+*.moved-aside
+*.hmap
+*.ipa
+*.dSYM.zip
+*.dSYM
+timeline.xctimeline
+playground.xcworkspace
+
+# Build output and reports
+.docc-build/
+docs/api/
+coverage/
+*.profraw
+*.profdata
+*.xcresult
+
+# Tooling
+.pre-commit-cache/
+.mise.local.toml
+.env
+.env.*
+
+# OS
+.DS_Store
+Thumbs.db

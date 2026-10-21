@@ -1,0 +1,41 @@
+name: Bug report
+description: Something in the SDK does not behave as documented
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+      description: Include the error (`OnetimeSecretError` case and `requestID` if any). Never paste a secret value, passphrase or API token.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect?
+    validations:
+      required: true
+  - type: textarea
+    id: code
+    attributes:
+      label: Minimal code to reproduce
+      render: swift
+  - type: input
+    id: version
+    attributes:
+      label: SDK version
+      placeholder: "1.2.0 (OnetimeSecretClient.version)"
+    validations:
+      required: true
+  - type: input
+    id: platform
+    attributes:
+      label: Platform and toolchain
+      placeholder: "iOS 26.1 simulator, Xcode 26.1, Swift 6.2"
+    validations:
+      required: true
+  - type: dropdown
+    id: region
+    attributes:
+      label: Region or installation
+      options: [us, eu, ca, uk, nz, self-hosted]

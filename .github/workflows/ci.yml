@@ -1,0 +1,212 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_call:
+  workflow_dispatch:
+    inputs:
+      live:
+        description: Also run the live tests against the hosted service
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+env:
+  SWIFT_DETERMINISTIC_HASHING: 1
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: macos-26
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Tool versions
+        run: |
+          swiftlint --version
+          swiftformat --version
+      - name: SwiftFormat (check only)
+        run: swiftformat --lint --strict .
+      - name: SwiftLint
+        run: swiftlint lint --strict --reporter github-actions-logging
+      - name: actionlint
+        run: |
+          brew install actionlint
+          actionlint
+
+  test-macos:
+    name: Test (macOS, Xcode ${{ matrix.xcode }})
+    runs-on: macos-26
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        xcode: ["26.6", "26.0.1"]
+    env:
+      DEVELOPER_DIR: /Applications/Xcode_${{ matrix.xcode }}.app/Contents/Developer
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Swift version
+        run: swift --version
+      - name: Build (release, warnings are errors)
+        run: swift build -c release -Xswiftc -warnings-as-errors
+      - name: Test with coverage
+        run: swift test --enable-code-coverage --parallel
+      - name: Export coverage
+        if: matrix.xcode == '26.6'
+        run: |
+          BIN="$(swift build --show-bin-path)"
+          PROFDATA="$BIN/codecov/default.profdata"
+          XCTEST="$(find "$BIN" -name '*.xctest' -maxdepth 1 | head -n 1)"
+          BINARY="$XCTEST/Contents/MacOS/$(basename "$XCTEST" .xctest)"
+          xcrun llvm-cov report "$BINARY" -instr-profile "$PROFDATA" -ignore-filename-regex='Tests/|\.build/' | tee coverage.txt
+          xcrun llvm-cov export "$BINARY" -instr-profile "$PROFDATA" -ignore-filename-regex='Tests/|\.build/' -format lcov > coverage.lcov
+      - name: Upload coverage
+        if: matrix.xcode == '26.6'
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: coverage-macos
+          path: |
+            coverage.txt
+            coverage.lcov
+          retention-days: 14
+
+  test-apple-platforms:
+    name: Build (${{ matrix.name }})
+    runs-on: macos-26
+    timeout-minutes: 30
+    needs: [test-macos]
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: iOS Simulator
+            destination: "" # resolved at runtime to an available iPhone
+            action: test
+          - name: tvOS Simulator
+            destination: "generic/platform=tvOS Simulator"
+            action: build
+          - name: watchOS Simulator
+            destination: "generic/platform=watchOS Simulator"
+            action: build
+          - name: visionOS Simulator
+            destination: "generic/platform=visionOS Simulator"
+            action: build
+          - name: Mac Catalyst
+            destination: "generic/platform=macOS,variant=Mac Catalyst"
+            action: build
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Resolve destination
+        id: destination
+        env:
+          CONFIGURED: ${{ matrix.destination }}
+        run: |
+          if [ -n "$CONFIGURED" ]; then
+            echo "value=$CONFIGURED" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          # First available iPhone simulator on this image, newest runtime first.
+          UDID="$(xcrun simctl list devices available -j | python3 -c '
+          import json, sys
+          data = json.load(sys.stdin)["devices"]
+          for runtime in sorted(data, reverse=True):
+              if "iOS" not in runtime:
+                  continue
+              for device in data[runtime]:
+                  if device["name"].startswith("iPhone"):
+                      print(device["udid"]); sys.exit(0)
+          sys.exit(1)')"
+          echo "value=platform=iOS Simulator,id=$UDID" >> "$GITHUB_OUTPUT"
+          xcrun simctl list devices | grep "$UDID"
+      - name: xcodebuild ${{ matrix.action }}
+        env:
+          # The auto-generated product scheme has no test action; the
+          # package scheme does.
+          SCHEME: ${{ matrix.action == 'test' && 'onetimesecret-ios-Package' || 'OnetimeSecret' }}
+        run: |
+          set -o pipefail
+          xcodebuild ${{ matrix.action }} \
+            -scheme "$SCHEME" \
+            -destination "${{ steps.destination.outputs.value }}" \
+            -skipPackagePluginValidation \
+            -skipMacroValidation \
+            CODE_SIGNING_ALLOWED=NO \
+            SWIFT_TREAT_WARNINGS_AS_ERRORS=YES \
+            | xcbeautify --renderer github-actions
+
+  test-linux:
+    name: Test (Linux, Swift ${{ matrix.swift }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    container: swift:${{ matrix.swift }}
+    strategy:
+      fail-fast: false
+      matrix:
+        swift: ["6.0", "6.2", "6.4"]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Swift version
+        run: swift --version
+      - name: Build (warnings are errors)
+        run: swift build -Xswiftc -warnings-as-errors
+      - name: Test
+        run: swift test --parallel
+
+  docs:
+    name: Build documentation
+    runs-on: macos-26
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: DocC
+        run: |
+          set -o pipefail
+          xcodebuild docbuild \
+            -scheme OnetimeSecret \
+            -destination "generic/platform=macOS" \
+            -derivedDataPath .docc-build \
+            OTHER_DOCC_FLAGS="--warnings-as-errors" \
+            | xcbeautify --renderer github-actions
+          test -d "$(find .docc-build -name 'OnetimeSecret.doccarchive' -type d | head -n 1)"
+
+  live:
+    name: Live tests (hosted service)
+    if: github.event_name == 'workflow_dispatch' && inputs.live
+    runs-on: macos-26
+    timeout-minutes: 15
+    needs: [test-macos]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Run live suite
+        env:
+          ONETIMESECRET_LIVE_TESTS: "1"
+          ONETIMESECRET_USERNAME: ${{ secrets.ONETIMESECRET_USERNAME }}
+          ONETIMESECRET_API_TOKEN: ${{ secrets.ONETIMESECRET_API_TOKEN }}
+        run: swift test --filter Live
+
+  # Single required status check for branch protection, so matrix cells can
+  # change without editing repository settings.
+  ci-ok:
+    name: CI OK
+    if: always()
+    needs: [lint, test-macos, test-apple-platforms, test-linux, docs]
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Every required job succeeded
+        env:
+          RESULTS: ${{ toJSON(needs) }}
+        run: |
+          echo "$RESULTS"
+          if echo "$RESULTS" | grep -Eq '"result": "(failure|cancelled)"'; then
+            exit 1
+          fi

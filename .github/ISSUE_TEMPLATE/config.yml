@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Security vulnerability
+    url: https://github.com/onetimesecret/onetimesecret-ios/security/policy
+    about: Please do not open a public issue. See SECURITY.md.
+  - name: Question about the API itself
+    url: https://api.onetimesecret.com
+    about: API documentation. Issues with the service rather than this SDK belong in the main onetimesecret repository.

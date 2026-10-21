@@ -1,0 +1,8 @@
+* text=auto eol=lf
+*.swift text diff=swift
+*.md text
+*.json text
+*.yml text
+*.yaml text
+*.xcprivacy text
+Tests/**/Fixtures/*.json linguist-generated=true

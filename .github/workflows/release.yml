@@ -1,0 +1,109 @@
+# Publishes a release when a version tag is pushed.
+#
+# Swift packages are distributed by git tag: SwiftPM and the Swift Package
+# Index resolve `from: "1.2.0"` straight from this repository. "Publishing"
+# therefore means: verify the tag is consistent with the source, prove the
+# tagged commit passes CI, and create the GitHub release that people and
+# changelog tooling link to. See RELEASING.md for the human side.
+
+name: Release
+
+on:
+  push:
+    tags: ["v[0-9]+.[0-9]+.[0-9]+*"]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  verify:
+    name: Verify tag
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      prerelease: ${{ steps.version.outputs.prerelease }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+      - name: Tag, Version.swift and CHANGELOG agree
+        id: version
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          scripts/check-version.sh "$VERSION"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          if [[ "$VERSION" == *-* ]]; then
+            echo "prerelease=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "prerelease=false" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Tag points at a commit on main
+        run: |
+          git fetch --no-tags origin main
+          if ! git merge-base --is-ancestor "$GITHUB_SHA" origin/main; then
+            echo "::error::Tag ${GITHUB_REF_NAME} is not on main. Tag only merged release commits." >&2
+            exit 1
+          fi
+
+  ci:
+    name: CI
+    needs: [verify]
+    uses: ./.github/workflows/ci.yml
+    permissions:
+      contents: read
+
+  publish:
+    name: Create GitHub release
+    needs: [verify, ci]
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Release notes from CHANGELOG
+        env:
+          VERSION: ${{ needs.verify.outputs.version }}
+        run: |
+          scripts/changelog-notes.sh "$VERSION" > notes.md
+          {
+            echo
+            echo "---"
+            echo
+            echo '**Swift Package Manager**'
+            echo
+            echo '```swift'
+            echo ".package(url: \"https://github.com/${GITHUB_REPOSITORY}.git\", from: \"${VERSION}\")"
+            echo '```'
+          } >> notes.md
+          cat notes.md
+      - name: Create release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ needs.verify.outputs.version }}
+          PRERELEASE: ${{ needs.verify.outputs.prerelease }}
+        run: |
+          ARGS=(--title "v${VERSION}" --notes-file notes.md --verify-tag)
+          if [ "$PRERELEASE" = "true" ]; then ARGS+=(--prerelease); else ARGS+=(--latest); fi
+          if gh release view "v${VERSION}" >/dev/null 2>&1; then
+            echo "Release v${VERSION} exists; updating notes."
+            gh release edit "v${VERSION}" --title "v${VERSION}" --notes-file notes.md
+          else
+            gh release create "v${VERSION}" "${ARGS[@]}"
+          fi
+      - name: Summary
+        env:
+          VERSION: ${{ needs.verify.outputs.version }}
+        run: |
+          {
+            echo "## Released v${VERSION}"
+            echo
+            echo "- GitHub release: https://github.com/${GITHUB_REPOSITORY}/releases/tag/v${VERSION}"
+            echo "- Swift Package Index picks the tag up automatically once the package is listed."
+            echo "- Documentation: the \`Docs\` workflow deploys from main; the release commit already triggered it."
+          } >> "$GITHUB_STEP_SUMMARY"

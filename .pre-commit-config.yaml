@@ -1,0 +1,31 @@
+# See https://pre-commit.com for more information
+# Install: brew install pre-commit && pre-commit install
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: trailing-whitespace
+        exclude: \.md$
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-json
+      - id: check-merge-conflict
+      - id: check-added-large-files
+        args: ["--maxkb=256"]
+      - id: detect-private-key
+
+  - repo: https://github.com/nicklockwood/SwiftFormat
+    rev: 0.64.0
+    hooks:
+      - id: swiftformat
+
+  - repo: https://github.com/realm/SwiftLint
+    rev: 0.65.1
+    hooks:
+      - id: swiftlint
+        args: ["--strict"]
+
+  - repo: https://github.com/rhysd/actionlint
+    rev: v1.7.12
+    hooks:
+      - id: actionlint

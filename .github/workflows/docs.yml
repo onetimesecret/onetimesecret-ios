@@ -1,0 +1,69 @@
+# Builds the DocC catalog and publishes it to GitHub Pages.
+# One-time setup: Settings → Pages → Source: "GitHub Actions".
+
+name: Docs
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "Sources/**"
+      - ".github/workflows/docs.yml"
+  workflow_call:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Build DocC
+    runs-on: macos-26
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Build archive
+        run: |
+          set -o pipefail
+          xcodebuild docbuild \
+            -scheme OnetimeSecret \
+            -destination "generic/platform=macOS" \
+            -derivedDataPath .docc-build \
+            OTHER_DOCC_FLAGS="--warnings-as-errors" \
+            | xcbeautify --renderer github-actions
+      - name: Transform for static hosting
+        env:
+          REPO_NAME: ${{ github.event.repository.name }}
+        run: |
+          ARCHIVE="$(find .docc-build -name 'OnetimeSecret.doccarchive' -type d | head -n 1)"
+          "$(xcrun --find docc)" process-archive transform-for-static-hosting "$ARCHIVE" \
+            --output-path site \
+            --hosting-base-path "$REPO_NAME"
+          # Land visitors on the module page instead of DocC's blank root.
+          cat > site/index.html <<EOF
+          <!doctype html><meta charset="utf-8">
+          <meta http-equiv="refresh" content="0; url=/${REPO_NAME}/documentation/onetimesecret/">
+          <link rel="canonical" href="/${REPO_NAME}/documentation/onetimesecret/">
+          EOF
+      - uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6.0.0
+      - uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
+        with:
+          path: site
+
+  deploy:
+    name: Deploy to GitHub Pages
+    needs: [build]
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5.0.1

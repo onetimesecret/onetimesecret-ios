@@ -1,0 +1,30 @@
+# Runs the end-to-end suite against the hosted service on a schedule so that
+# API drift shows up here before it shows up in a customer's app. Creates a
+# handful of five-minute secrets per run and consumes or burns them.
+#
+# Secrets (optional; the suite runs as a guest without them):
+#   ONETIMESECRET_USERNAME, ONETIMESECRET_API_TOKEN
+
+name: Live API check
+
+on:
+  schedule:
+    - cron: "23 6 * * 1" # Mondays 06:23 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  live:
+    name: Live tests
+    runs-on: macos-26
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Run
+        env:
+          ONETIMESECRET_LIVE_TESTS: "1"
+          ONETIMESECRET_USERNAME: ${{ secrets.ONETIMESECRET_USERNAME }}
+          ONETIMESECRET_API_TOKEN: ${{ secrets.ONETIMESECRET_API_TOKEN }}
+        run: swift test --filter Live

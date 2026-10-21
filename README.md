@@ -33,10 +33,10 @@ targets: [
 ]
 ```
 
-Requires a Swift 6.0 or newer toolchain (Xcode 16.0 or newer). CI runs Xcode
-26.x on macOS and Swift 6.0, 6.2 and 6.4 on Linux. Deployment targets: iOS 15,
-macOS 12, tvOS 15, watchOS 8, visionOS 1. Linux is supported for server-side
-and CLI use.
+Requires a Swift 6.0 or newer toolchain (Xcode 16.0 or newer). Deployment
+targets: iOS 15, macOS 12, tvOS 15, watchOS 8, visionOS 1. Linux is supported
+for server-side and CLI use. See [Platform support](#platform-support) for
+what CI verifies on each.
 
 ## Usage
 
@@ -171,6 +171,24 @@ ONETIME_CUSTOMER_EXTID=ur... ONETIME_API_TOKEN=... make example   # as your acco
 `make example` is `swift run --package-path Examples/Roundtrip`. The same
 `ONETIME_*` variables configure the other official SDKs and the live test
 suite, and `ONETIME_BASE_URL` can point at a self-hosted or local server.
+
+## Platform support
+
+| Platform | Minimum | What CI runs |
+| --- | --- | --- |
+| macOS | 12 | Unit tests on Xcode 26.6, 26.0.1 and 16.0 |
+| iOS | 15 | Unit tests on an iPhone simulator (Xcode 26) |
+| Linux | Swift 6.0 | Unit tests on Swift 6.0, 6.2 and 6.4 |
+| tvOS | 15 | Build only |
+| watchOS | 8 | Build only |
+| visionOS | 1 | Build only |
+| Mac Catalyst | macOS 12 | Build only |
+
+The Swift 6.0 floor is verified on macOS (Xcode 16.0) and on Linux. Build-only
+platforms compile the package with warnings as errors but do not run the
+tests; they share the `URLSession` transport with iOS and macOS, where it is
+tested. The live suite runs weekly on macOS and Linux against the hosted
+service.
 
 ## Documentation
 

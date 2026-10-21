@@ -16,10 +16,26 @@ permissions:
   contents: read
 
 jobs:
-  live:
-    name: Live tests
+  live-macos:
+    name: Live tests (macOS)
     runs-on: macos-26
     timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Run
+        env:
+          ONETIME_LIVE: "1"
+          ONETIME_CUSTOMER_EXTID: ${{ secrets.ONETIME_CUSTOMER_EXTID }}
+          ONETIME_API_TOKEN: ${{ secrets.ONETIME_API_TOKEN }}
+        run: swift test --filter Live
+
+  # The Linux transport is a different code path (swift-corelibs-foundation,
+  # completion-handler bridging), so it gets its own run against the service.
+  live-linux:
+    name: Live tests (Linux)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    container: swift:6.4
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - name: Run

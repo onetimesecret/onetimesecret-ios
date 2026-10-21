@@ -21,9 +21,10 @@ make docs        # DocC via xcodebuild docbuild (macOS only)
 make example     # Examples/Roundtrip against ONETIME_BASE_URL (default: EU region, guest)
 ```
 
-CI runs lint, macOS (two Xcodes), iOS simulator tests, tvOS/watchOS/visionOS/
-Catalyst builds, Linux (three Swift versions) and DocC with warnings as
-errors. `-warnings-as-errors` is on; do not add suppressions.
+CI runs lint, macOS (Xcode 26.6, 26.0.1 and 16.0 for the Swift 6.0 floor),
+iOS simulator tests, tvOS/watchOS/visionOS/Catalyst builds, Linux (Swift
+6.0, 6.2, 6.4) and DocC with warnings as errors. The weekly live suite runs
+on macOS and Linux. `-warnings-as-errors` is on; do not add suppressions.
 
 ## Layout
 

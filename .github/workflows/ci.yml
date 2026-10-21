@@ -45,12 +45,20 @@ jobs:
 
   test-macos:
     name: Test (macOS, Xcode ${{ matrix.xcode }})
-    runs-on: macos-26
+    runs-on: ${{ matrix.runner }}
     timeout-minutes: 30
     strategy:
       fail-fast: false
       matrix:
-        xcode: ["26.6", "26.0.1"]
+        include:
+          - xcode: "26.6"
+            runner: macos-26
+          - xcode: "26.0.1"
+            runner: macos-26
+          # Swift 6.0, the toolchain floor in Package.swift. Only the macos-15
+          # image still ships Xcode 16.0.
+          - xcode: "16.0"
+            runner: macos-15
     env:
       DEVELOPER_DIR: /Applications/Xcode_${{ matrix.xcode }}.app/Contents/Developer
     steps:

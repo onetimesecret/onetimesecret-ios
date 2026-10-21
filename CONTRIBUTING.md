@@ -6,8 +6,9 @@ enforces, and what a good pull request looks like.
 ## Initial setup
 
 You need macOS with Xcode 16.0 or newer for the full matrix (iOS, tvOS,
-watchOS, visionOS simulators, DocC); CI uses Xcode 26.x. On Linux, a Swift 6
-toolchain is enough to build and run the unit tests.
+watchOS, visionOS simulators, DocC); CI uses Xcode 26.x, plus Xcode 16.0 to
+prove the Swift 6.0 floor. On Linux, a Swift 6 toolchain is enough to build
+and run the unit tests.
 
 ```sh
 git clone https://github.com/onetimesecret/onetimesecret-ios.git
@@ -89,7 +90,7 @@ field on `Secret` or `Receipt` plus a fixture update, not a new type.
    protection.
 2. Keep PRs focused. Formatting-only changes go in their own PR.
 3. Fill in the template. The checklist is short on purpose.
-4. CI must be green: `CI OK` fans in lint, macOS (two Xcode versions), iOS
+4. CI must be green: `CI OK` fans in lint, macOS (three Xcode versions), iOS
    simulator tests, tvOS/watchOS/visionOS/Catalyst builds, Linux (three
    Swift versions) and DocC with warnings as errors.
 5. One approving review from a code owner, then squash-merge. The squash

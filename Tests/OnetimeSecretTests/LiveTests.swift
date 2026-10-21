@@ -100,10 +100,13 @@ enum LiveEnvironment {
     static func makeClient() -> OnetimeSecretClient {
         let env = ProcessInfo.processInfo.environment
         var credentials: Credentials?
-        if let username = env["ONETIME_CUSTOMER_EXTID"], let token = env["ONETIME_API_TOKEN"] {
+        // CI expands unset secrets to empty strings; treat those as absent so
+        // the suite runs as a guest instead of sending empty credentials.
+        if let username = env["ONETIME_CUSTOMER_EXTID"], let token = env["ONETIME_API_TOKEN"],
+           !username.isEmpty, !token.isEmpty {
             credentials = Credentials(username: username, apiToken: token)
         }
-        if let raw = env["ONETIME_BASE_URL"], let url = URL(string: raw) {
+        if let raw = env["ONETIME_BASE_URL"], !raw.isEmpty, let url = URL(string: raw) {
             return OnetimeSecretClient(baseURL: url, credentials: credentials)
         }
         return OnetimeSecretClient(region: .unitedStates, credentials: credentials)

@@ -78,9 +78,9 @@ After the first tag exists, open a pull request to
 adding `https://github.com/onetimesecret/onetimesecret-ios.git`. From then on
 every tag is indexed automatically, and the index builds the package on
 every platform and Swift version it supports; its compatibility badges are a
-useful second opinion on the CI matrix. Optional: add a
-`.spi.yml` later if documentation should be hosted there rather than on
-GitHub Pages.
+useful second opinion on the CI matrix. `.spi.yml` at the repository root
+asks the index to build and host the DocC catalog for the `OnetimeSecret`
+target as well, so the reference appears there and on GitHub Pages.
 
 ### 4. First release
 

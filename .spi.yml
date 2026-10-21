@@ -1,0 +1,9 @@
+# Swift Package Index manifest.
+# https://swiftpackageindex.com/SwiftPackageIndex/SPIManifest/documentation/spimanifest
+#
+# Asks the index to build and host the DocC catalog for the OnetimeSecret
+# target, the package's only library product, alongside the GitHub Pages copy.
+version: 1
+builder:
+  configs:
+    - documentation_targets: [OnetimeSecret]

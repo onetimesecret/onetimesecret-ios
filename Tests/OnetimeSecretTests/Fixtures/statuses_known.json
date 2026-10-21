@@ -1,0 +1,39 @@
+{
+  "records": [
+    {
+      "identifier": "secret00000000000000000000000000000000000000000000000000000000",
+      "key": "secret00000000000000000000000000000000000000000000000000000000",
+      "shortid": "secret00",
+      "state": "new",
+      "lifespan": 300,
+      "secret_ttl": 300,
+      "has_passphrase": false,
+      "verification": false,
+      "display_type": "text",
+      "created": 1792597029.52958,
+      "updated": 1792597029.52959,
+      "is_previewed": false,
+      "is_revealed": false,
+      "is_viewed": false,
+      "is_received": false
+    },
+    {
+      "identifier": "secret11111111111111111111111111111111111111111111111111111111",
+      "key": "secret11111111111111111111111111111111111111111111111111111111",
+      "shortid": "secret11",
+      "state": "new",
+      "lifespan": 300,
+      "secret_ttl": 300,
+      "has_passphrase": true,
+      "verification": false,
+      "display_type": "text",
+      "created": 1792597029.65599,
+      "updated": 1792597029.65599,
+      "is_previewed": false,
+      "is_revealed": false,
+      "is_viewed": false,
+      "is_received": false
+    }
+  ],
+  "count": 2
+}

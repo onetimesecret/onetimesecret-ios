@@ -323,6 +323,38 @@ struct SecretsTests {
         #expect(transport.lastRequest?.jsonBody?["identifiers"] as? String == "a,b")
     }
 
+    @Test("bulk status decodes every record the service knows and keeps their order")
+    func bulkStatusRecords() async throws {
+        let transport = MockTransport(fixture: "statuses_known")
+        let client = OnetimeSecretClient.authenticated(transport)
+
+        let secrets = try await client.secrets.statuses(of: [
+            "https://eu.onetimesecret.com/secret/secret00000000000000000000000000000000000000000000000000000000",
+            "secret11111111111111111111111111111111111111111111111111111111",
+            "doesnotexist0000",
+        ])
+
+        let request = try #require(transport.lastRequest)
+        #expect(request.method == .post)
+        #expect(request.url.absoluteString == "https://eu.onetimesecret.com/api/v2/secret/status")
+        #expect(request.jsonBody?["identifiers"] as? String == [
+            "secret00000000000000000000000000000000000000000000000000000000",
+            "secret11111111111111111111111111111111111111111111111111111111",
+            "doesnotexist0000",
+        ].joined(separator: ","))
+
+        // The unknown identifier is omitted rather than reported.
+        #expect(secrets.count == 2)
+        #expect(secrets.map(\.shortID) == ["secret00", "secret11"])
+        #expect(secrets.map(\.hasPassphrase) == [false, true])
+        #expect(secrets.allSatisfy { $0.state == .new })
+        #expect(secrets.map(\.isAvailable) == [true, true])
+        #expect(secrets.allSatisfy { $0.value == nil })
+        #expect(secrets[0].lifespan == 300)
+        #expect(secrets[0].timeToLive == 300)
+        #expect(secrets[1].createdAt?.timeIntervalSince1970 == 1_792_597_029.65599)
+    }
+
     @Test("bulk status with no identifiers makes no request")
     func bulkStatusEmpty() async throws {
         let transport = MockTransport()

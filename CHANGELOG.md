@@ -24,4 +24,4 @@ Entries under **Unreleased** are promoted by `scripts/release.sh prepare`.
 - `Examples/Roundtrip`: a runnable conceal, inspect, reveal walkthrough
   (`make example`), configured by the `ONETIME_*` variables the other SDKs use.
 
-[Unreleased]: https://github.com/onetimesecret/onetimesecret-ios/compare/main...HEAD
+[Unreleased]: https://github.com/onetimesecret/onetimesecret-ios/commits/main

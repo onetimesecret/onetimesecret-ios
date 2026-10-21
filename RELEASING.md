@@ -35,13 +35,16 @@ is in [CONTRIBUTING.md](CONTRIBUTING.md).
 
 - **General → Pull Requests**: allow squash merging only; enable
   "Automatically delete head branches".
-- **Branches → Add ruleset for `main`**: require a pull request, one
-  approval, require the single status check `CI OK` (the `ci-ok` job in
+- **Branches → Add ruleset for `main`**: require a pull request (no
+  approval count, stale reviews dismissed on push, squash the only merge
+  method), require the single status check `CI OK` (the `ci-ok` job in
   `ci.yml` fans in every lint, test, build and docs job, so matrix cells can
-  change without touching this setting), require branches to be up to date,
-  block force pushes. Include administrators.
-- **Tags → Add ruleset for `v*`**: restrict creation to maintainers (the
-  `delano` user or a release team). This is the control on who can publish.
+  change without touching this setting), block force pushes and deletion.
+  Repository admins bypass the ruleset so a release can be unblocked; the
+  branch does not need to be up to date, since CI reruns on `main`.
+- **Tags → Add ruleset for `v*`**: block creation, update and deletion of
+  release tags for everyone except repository admins. This is the control
+  on who can publish.
 - **Actions → General**: "Allow GitHub Actions to create and approve pull
   requests" off; workflow permissions "Read repository contents". The
   release workflow asks for `contents: write` explicitly.

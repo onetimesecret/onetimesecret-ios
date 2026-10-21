@@ -86,16 +86,18 @@ field on `Secret` or `Receipt` plus a fixture update, not a new type.
 
 ## Pull requests
 
-1. Branch from `main`. Direct pushes to `main` are blocked by branch
-   protection.
+1. Branch from `main`. A ruleset on `main` requires a pull request with the
+   `CI OK` check and blocks force pushes and deletion; repository admins can
+   bypass it, and should only do so to unblock a broken release.
 2. Keep PRs focused. Formatting-only changes go in their own PR.
 3. Fill in the template. The checklist is short on purpose.
 4. CI must be green: `CI OK` fans in lint, macOS (three Xcode versions), iOS
    simulator tests, tvOS/watchOS/visionOS/Catalyst builds, Linux (three
    Swift versions) and DocC with warnings as errors.
-5. One approving review from a code owner, then squash-merge. The squash
-   commit title becomes the line people see in `git log`, so make it a
-   sentence.
+5. Ask a code owner for a review, then squash-merge (the only merge method
+   enabled). The ruleset does not require an approval, so a lone maintainer
+   can ship; it does dismiss stale reviews when you push. The squash commit
+   title becomes the line people see in `git log`, so make it a sentence.
 
 ## Reporting problems
 

@@ -3,11 +3,13 @@ included:
   - Package.swift
   - Sources
   - Tests
+  - Examples
 
 excluded:
   - .build
   - .swiftpm
   - DerivedData
+  - Examples/*/.build
 
 analyzer_rules:
   - unused_declaration
@@ -100,6 +102,7 @@ custom_rules:
     message: "An SDK must not write to stdout. Secrets could end up in logs."
     severity: error
     included: "Sources/.*\\.swift"
+    excluded: "Examples/.*"
     excluded_match_kinds: [comment, doccomment, doccomment.field, string]
   no_nslog:
     name: "No NSLog / os_log"
@@ -107,4 +110,5 @@ custom_rules:
     message: "An SDK must not log. Secrets could end up in logs."
     severity: error
     included: "Sources/.*\\.swift"
+    excluded: "Examples/.*"
     excluded_match_kinds: [comment, doccomment, doccomment.field, string]

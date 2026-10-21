@@ -18,6 +18,7 @@ make lint        # swiftformat --lint --strict . && swiftlint lint --strict
 make format      # apply both
 make test-live   # opt-in end-to-end against the hosted US region (creates 5-minute secrets)
 make docs        # DocC via xcodebuild docbuild (macOS only)
+make example     # Examples/Roundtrip against ONETIME_BASE_URL (default: EU region, guest)
 ```
 
 CI runs lint, macOS (two Xcodes), iOS simulator tests, tvOS/watchOS/visionOS/
@@ -38,6 +39,8 @@ errors. `-warnings-as-errors` is on; do not add suppressions.
   `RequestExecution.swift`.
 - `Tests/OnetimeSecretTests/Fixtures` — real API responses with identifiers
   scrubbed. Capture new ones from the live service; do not hand-write.
+- `Examples/Roundtrip` — a separate executable package that depends on the
+  SDK by relative path. It is the one place `print` is allowed; CI builds it.
 
 ## Rules that are easy to miss
 

@@ -1,6 +1,6 @@
 # SwiftFormat configuration. https://github.com/nicklockwood/SwiftFormat
 --swiftversion 6.0
---exclude .build,.swiftpm,DerivedData
+--exclude .build,.swiftpm,DerivedData,Examples/*/.build
 
 # Formatting
 --indent 4

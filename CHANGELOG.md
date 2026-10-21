@@ -21,5 +21,7 @@ Entries under **Unreleased** are promoted by `scripts/release.sh prepare`.
   redaction of secret material in descriptions and decoding failures.
 - Lenient decoding of legacy string-typed fields.
 - Privacy manifest, DocC catalog, Linux support.
+- `Examples/Roundtrip`: a runnable conceal, inspect, reveal walkthrough
+  (`make example`), configured by the `ONETIME_*` variables the other SDKs use.
 
 [Unreleased]: https://github.com/onetimesecret/onetimesecret-ios/compare/main...HEAD

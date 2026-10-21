@@ -156,6 +156,22 @@ let client = OnetimeSecretClient(region: .europe, transport: CannedTransport())
 
 The SDK's own tests use the same seam; see `Tests/OnetimeSecretTests/Support`.
 
+## Example
+
+`Examples/Roundtrip` is a small executable package that conceals a secret,
+reads its receipt, reveals it once and shows the receipt change state. It
+talks to the EU region as a guest unless told otherwise:
+
+```sh
+make example                                            # https://eu.onetimesecret.com, guest
+ONETIME_BASE_URL=https://us.onetimesecret.com make example
+ONETIME_CUSTOMER_EXTID=ur... ONETIME_API_TOKEN=... make example   # as your account
+```
+
+`make example` is `swift run --package-path Examples/Roundtrip`. The same
+`ONETIME_*` variables configure the other official SDKs and the live test
+suite, and `ONETIME_BASE_URL` can point at a self-hosted or local server.
+
 ## Documentation
 
 API reference: https://onetimesecret.github.io/onetimesecret-ios/ (built from
@@ -176,6 +192,8 @@ Tests/OnetimeSecretTests/
   Fixtures/    JSON captured from the live API (identifiers scrubbed)
   Support/     MockTransport
   LiveTests    opt-in end-to-end suite (ONETIME_LIVE=1)
+Examples/Roundtrip/
+  Sources/     runnable conceal → receipt → reveal walkthrough (make example)
 ```
 
 ## Contributing

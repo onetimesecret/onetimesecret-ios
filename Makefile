@@ -7,7 +7,7 @@ SCHEME := onetimesecret-ios
 ARCHIVE_NAME := OnetimeSecret
 IOS_DESTINATION ?= platform=iOS Simulator,name=iPhone 17
 
-.PHONY: help setup build test test-live test-ios lint format docs docs-preview clean check release-prepare release-tag
+.PHONY: help setup build test test-live test-ios example lint format docs docs-preview clean check release-prepare release-tag
 
 help: ## Show this help
 	@grep -E '^[a-zA-Z_-]+:.*?## ' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-16s\033[0m %s\n", $$1, $$2}'
@@ -26,6 +26,9 @@ test: ## Run unit tests
 
 test-live: ## Run end-to-end tests against the hosted service (guest unless ONETIME_CUSTOMER_EXTID and ONETIME_API_TOKEN are set)
 	ONETIME_LIVE=1 swift test --filter Live
+
+example: ## Run Examples/Roundtrip: conceal, inspect, reveal (ONETIME_BASE_URL overrides the EU region)
+	swift run --package-path Examples/Roundtrip
 
 test-ios: ## Run tests on an iOS simulator (IOS_DESTINATION overrides the device)
 	set -o pipefail; xcodebuild test -scheme $(SCHEME) -destination "$(IOS_DESTINATION)" \

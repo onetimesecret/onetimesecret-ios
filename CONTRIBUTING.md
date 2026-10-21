@@ -24,6 +24,7 @@ make test      # unit tests, ~1s
 | `make check` | Lint and test exactly as CI does. Run before pushing. |
 | `make format` | Apply SwiftFormat and SwiftLint autocorrect. |
 | `make test-ios` | Run the suite on an iOS simulator through `xcodebuild`. |
+| `make example` | Run `Examples/Roundtrip` against the EU region as a guest; `ONETIME_BASE_URL` points it elsewhere. |
 | `make test-live` | End-to-end against the hosted US region as a guest. Creates throwaway five-minute secrets. |
 | `make docs-preview` | Build the DocC archive and serve it on localhost. |
 

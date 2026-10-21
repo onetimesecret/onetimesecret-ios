@@ -61,6 +61,8 @@ jobs:
         run: swift build -c release -Xswiftc -warnings-as-errors
       - name: Test with coverage
         run: swift test --enable-code-coverage --parallel
+      - name: Build example
+        run: swift build --package-path Examples/Roundtrip -Xswiftc -warnings-as-errors
       - name: Export coverage
         if: matrix.xcode == '26.6'
         run: |
@@ -157,6 +159,8 @@ jobs:
         run: swift build -Xswiftc -warnings-as-errors
       - name: Test
         run: swift test --parallel
+      - name: Build example
+        run: swift build --package-path Examples/Roundtrip -Xswiftc -warnings-as-errors
 
   docs:
     name: Build documentation

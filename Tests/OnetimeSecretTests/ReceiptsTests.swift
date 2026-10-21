@@ -94,6 +94,31 @@ struct ReceiptsTests {
         #expect(request.jsonBody?["passphrase"] as? String == "pw")
     }
 
+    @Test("burn with a wrong or missing passphrase maps the 422 to passphraseRejected")
+    func burnPassphraseRejected() async throws {
+        let transport = MockTransport(status: 422, fixture: "error_422_passphrase")
+        let client = OnetimeSecretClient.guest(transport)
+
+        do {
+            try await client.receipts.burn(
+                "receipt0000000000000000000000000000000000000000000000000000000",
+                passphrase: "wrong"
+            )
+            Issue.record("Expected passphraseRejected")
+        } catch let error as OnetimeSecretError {
+            guard case let .passphraseRejected(details) = error else {
+                Issue.record("Expected .passphraseRejected, got \(error)")
+                return
+            }
+            #expect(details.statusCode == 422)
+            #expect(details.message == "Incorrect passphrase")
+            #expect(error.requestID == "0ivnpf8jl0p42")
+            #expect(!error.isRetryable)
+        }
+        #expect(transport.requests.count == 1)
+        #expect(transport.lastRequest?.jsonBody?["passphrase"] as? String == "wrong")
+    }
+
     @Test("updateMemo patches the receipt")
     func updateMemo() async throws {
         let transport = MockTransport(fixture: "receipt_revealed")

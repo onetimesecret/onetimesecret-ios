@@ -74,6 +74,9 @@ their own so formatting churn stays separate from code changes.
   so in the PR.
 - The `Live` suite is skipped unless `ONETIME_LIVE=1`. Add a
   live test when you add an operation; it is what catches API drift.
+  Against a local server, start it with `HOST` set to the host and port in
+  `ONETIME_BASE_URL` (for example `HOST=127.0.0.1:7143`): the server builds
+  the links in receipts from `HOST`, which defaults to `localhost:3000`.
 - CI builds with `-warnings-as-errors`. Fix warnings, do not suppress them.
 
 ### Targeting the API

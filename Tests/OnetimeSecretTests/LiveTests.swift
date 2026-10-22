@@ -66,6 +66,10 @@ struct LiveTests {
         let again = try await client.receipts.get(generated.receipt.identifier)
         #expect(again.generatedValue == nil)
 
+        // The server builds receipt links from its HOST setting; a local
+        // server whose HOST differs from ONETIME_BASE_URL fails here.
+        #expect(again.shareURL == generated.shareURL)
+
         try await client.receipts.burn(generated.receipt.identifier)
 
         let after = try await client.receipts.get(generated.receipt.identifier)

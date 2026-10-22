@@ -96,6 +96,7 @@ installation.
 
 - ``OnetimeSecretError``
 - ``APIErrorDetails``
+- ``ClaimFailure``
 
 ### Customising transport
 

@@ -19,6 +19,10 @@ Entries under **Unreleased** are promoted by `scripts/release.sh prepare`.
   and cookies.
 - Typed errors (`OnetimeSecretError`) with request IDs, `Retry-After`, and
   redaction of secret material in descriptions and decoding failures.
+- `generate` claims the generated value, which the service discloses once,
+  and returns it in `value`. A failed claim keeps the created secret and
+  reports a `ClaimFailure` with the status and error type only, never the
+  API's message or the response body.
 - Lenient decoding of legacy string-typed fields.
 - Privacy manifest, DocC catalog, Linux support.
 - `Examples/Roundtrip`: a runnable conceal, inspect, reveal walkthrough

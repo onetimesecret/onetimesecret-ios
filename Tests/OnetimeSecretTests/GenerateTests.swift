@@ -42,9 +42,33 @@ struct GenerateTests {
         let result = try await client.secrets.generate()
 
         #expect(result.value == nil)
-        #expect(result.claimFailure == "slow down")
+        let failure = try #require(result.claimFailure)
+        #expect(failure.reason == "rateLimited")
+        #expect(failure.statusCode == 429)
+        #expect(!failure.description.contains("slow down"))
         #expect(result.receipt.shortID == "receipt0")
         #expect(!result.description.contains("bvpPtGPgtLd7ApUVqdEn"))
+    }
+
+    @Test("a failed claim reports neither the API's message nor the body")
+    func generateClaimFailureIsSanitized() async throws {
+        let failing = MockTransport(fixture: "generate")
+        failing.enqueue(.response(TransportResponse(
+            statusCode: 500,
+            body: Data(#"{"error":"bvpPtGPgtLd7ApUVqdEn","error_type":"ServerError"}"#.utf8)
+        )))
+        let server = try #require(try await OnetimeSecretClient.guest(failing).secrets.generate().claimFailure)
+        #expect(server == ClaimFailure(reason: "server", statusCode: 500, errorType: "ServerError"))
+        #expect(!String(reflecting: server).contains("bvpPtGPgtLd7ApUVqdEn"))
+
+        let garbled = MockTransport(fixture: "generate")
+        garbled.enqueue(.response(TransportResponse(
+            statusCode: 200,
+            body: Data(#"{"record":{"secret_value":"bvpPtGPgtLd7ApUVqdEn""#.utf8)
+        )))
+        let decoding = try #require(try await OnetimeSecretClient.guest(garbled).secrets.generate().claimFailure)
+        #expect(decoding == ClaimFailure(reason: "decoding"))
+        #expect(!String(reflecting: decoding).contains("bvpPtGPgtLd7ApUVqdEn"))
     }
 
     @Test("generate can skip the claim")

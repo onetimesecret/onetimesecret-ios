@@ -59,7 +59,7 @@ public struct GeneratedSecret: Sendable, Hashable {
 
     /// Why the value could not be claimed, when the receipt fetch after
     /// creation failed. The secret itself was created and is live.
-    public var claimFailure: String?
+    public var claimFailure: ClaimFailure?
 
     public init(
         secret: Secret,
@@ -69,7 +69,7 @@ public struct GeneratedSecret: Sendable, Hashable {
         receiptURL: URL,
         burnURL: URL,
         value: String?,
-        claimFailure: String? = nil
+        claimFailure: ClaimFailure? = nil
     ) {
         self.secret = secret
         self.receipt = receipt

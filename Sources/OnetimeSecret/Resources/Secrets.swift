@@ -90,14 +90,14 @@ extension OnetimeSecretClient {
 
             var value: String?
             var receipt = concealed.receipt
-            var claimFailure: String?
+            var claimFailure: ClaimFailure?
             if options.claimValue {
                 do {
                     let fetched = try await client.receipts.get(receipt.identifier)
                     value = fetched.generatedValue
                     receipt = fetched
                 } catch let error as OnetimeSecretError {
-                    claimFailure = error.errorDescription ?? String(describing: error)
+                    claimFailure = ClaimFailure(error)
                 }
             }
 

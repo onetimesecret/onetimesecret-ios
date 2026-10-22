@@ -85,7 +85,8 @@ The service shows a generated value to its creator a single time. The SDK
 claims that disclosure for you by fetching the receipt right after creation;
 pass `claimValue: false` to do it yourself through `receipts.get`. If that
 second request fails, the secret still exists: you get it back with `value`
-`nil` and the reason in `claimFailure`.
+`nil` and the reason in `claimFailure`, a `ClaimFailure` that carries the
+HTTP status and error type but never the response, which could hold the value.
 
 ### Burn it
 
